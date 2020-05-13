@@ -28,6 +28,9 @@ def open_mainUI():
     top.minsize(400,300)
     # top.maxsize(520,450)
     top.configure(background='#444')
+
+    #Disabling Select button of root UI
+    select_btn.configure(state=DISABLED)
     
     #top frame
     top_UI_frame = Frame(top, width=500, height=150, bg='#333')
@@ -39,6 +42,7 @@ def open_mainUI():
         canvas.delete('all')
         canvasHeight = 300
         canvasWidth = 500
+        
         #width of bar graphs to be generated
         barGraphWidth = canvasWidth / (len(data) + 1)
         #bar graph should not start at border
@@ -47,6 +51,7 @@ def open_mainUI():
         spacing = 10
         #Normalizing size of bar graph
         normalizedData = [ i/max(data) for i in data]
+
         #iterating through the data
         for i, heightBar in enumerate(normalizedData):
             #coords for creating BarGraph
@@ -61,34 +66,54 @@ def open_mainUI():
             #number written over the Bar Graph
             canvas.create_text(x1, y1, anchor=SW, text=str(data[i]))
 
-    def simulate():
+    def generate():
         # data = [10, 3, 12, 6, 1, 13, 15, 20]
-        #Importing values from Entry Boxes
-        size = int(sizeInput.get())
-        minVal = int(minValue.get())
-        maxVal = int(maxValue.get())
+        
+        if sizeInput.get()=='' and minValue.get()=='' and maxValue.get()=='': 
+            #Importing values from Input Data Entry Box
+            userData = list(inputData.get().split())
+            ipData = [ int(i) for i in userData]
+            #print(ipData)
+            drawGraph(ipData)
 
-        if minVal > maxVal:
-            minVal, maxVal = maxVal, minVal
+        else:
+            inputData.delete(0, END)
+            #Importing values from Entry Boxes
+            size = int(sizeInput.get())
+            minVal = int(minValue.get())
+            maxVal = int(maxValue.get())
 
-        if minVal < 0:
-            minVal = 0
+            #removing errors
+            if minVal > maxVal:
+                minVal, maxVal = maxVal, minVal
 
-        if maxVal > 100:
-            maxVal = 100
+            if minVal < 0:
+                minVal = 0
 
-        if size  > 15:
-            size = 15
+            if maxVal > 100:
+                maxVal = 100
 
-        if size  < 3:
-            size = 5
+            if size  > 15:
+                size = 15
 
-        createdData = []
-        #creating random data of given size
-        for i in range(0, size):
-            createdData.append(random.randrange(minVal, maxVal+1))
+            if size  < 3:
+                size = 5
 
-        drawGraph(createdData)
+            createdData = []
+            #creating random data of given size
+            for i in range(0, size):
+                createdData.append(random.randrange(minVal, maxVal+1))
+
+            drawGraph(createdData)
+
+    def simulate():
+        return
+
+    def close_topUI():
+        top.destroy()
+        #Enabling Select button of root UI
+        select_btn.configure(state=NORMAL)
+
 
     #Row[0] on top_UI_frame --> Row[0] on Top Level
     Label(top_UI_frame, text='Size: ', bg='#333', fg='#fff', font=('Helvetica', '10', 'bold')).grid(row=0, column=0, padx=10, pady=10, sticky=W)
@@ -103,22 +128,24 @@ def open_mainUI():
     maxValue = Entry(top_UI_frame, width=10, font=('Helvetica', '10', 'bold'))
     maxValue.grid(row=0, column=5, padx=10, pady=10, sticky=W)
     
-    # #Row[1] on top_UI_frame
-    # Label(top_UI_frame, text='Enter Data: ', bg='#333', fg='#fff', font=('Helvetica', '10', 'bold')).grid(row=1, column=0, padx=10, pady=10, sticky=W)
-    # enterData = Entry(top_UI_frame, width=10, font=('Helvetica', '10', 'bold'))
-    # enterData.grid(row=1, column=1, padx=10, pady=10, sticky=W)
-
     #Row[1] on top_UI_frame
-    Button(top_UI_frame, text="START Simulation", font=('Helvetica', '8', 'bold'), command=simulate, bg='#800000', fg='#fff').grid(row=1, column=0, pady=10, sticky=W+E, columnspan=6)
+    Label(top_UI_frame, text='Input Data: ', bg='#333', fg='#fff', font=('Helvetica', '10', 'bold')).grid(row=1, column=0, padx=10, pady=10, sticky=W)
+    inputData = Entry(top_UI_frame, width=10, font=('Helvetica', '10', 'bold'))
+    inputData.grid(row=1, column=1, padx=10, pady=10, columnspan=2, sticky=W+E)
+
+    Button(top_UI_frame, text="Generate Data", font=('Helvetica', '8', 'bold'), command=generate, bg='#4c602a', fg='#fff').grid(row=1, column=4, pady=10, sticky=W+E, columnspan=2)
+
+    #Row[2] on top_UI_frame
+    Button(top_UI_frame, text="START Simulation", font=('Helvetica', '8', 'bold'), command=simulate, bg='#800000', fg='#fff').grid(row=2, column=0, pady=10, sticky=W+E, columnspan=6)
 
 
     #Row[1]
     #CANVAS on Toplevel
-    canvas = Canvas(top, width=500, height=300, bg='white')
+    canvas = Canvas(top, width=570, height=300, bg='white')
     canvas.grid(row=1, column=0, padx=10, pady=5)
     
     #Row[3] Close Button
-    close_top_btn = Button(top, text="CLOSE", font=('Helvetica', '8', 'bold'), command=top.destroy)
+    close_top_btn = Button(top, text="CLOSE", font=('Helvetica', '8', 'bold'), command=close_topUI)
     close_top_btn.grid(row=2, column=0, pady=10, sticky=W+E)
 
 #----------------------------------------------------------------------------------------------------------------------
