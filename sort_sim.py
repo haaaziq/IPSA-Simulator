@@ -2,16 +2,18 @@ from tkinter import *
 from PIL import ImageTk, Image
 from tkinter import ttk
 import random
+from sortingAlgos import bubble_sort
 
 root = Tk()
 root.title('IPSA Simulator')
 root.iconbitmap('3.ico')
 root.configure(background = 'black')
-root.minsize(240,200)
-root.maxsize(250,200)
+root.minsize(307,212)
+root.maxsize(320,212)
 
 #Variables
 Algorithm_selected_var = StringVar()
+data = []
 
 #Title 
 title = Label(root, text="IPSA SIMULATOR", fg='white', bg='black', font=('Times', '18', "underline"))
@@ -29,15 +31,16 @@ def open_mainUI():
     # top.maxsize(520,450)
     top.configure(background='#444')
 
-    #Disabling Select button of root UI
+    #Disabling widgets of root UI
     select_btn.configure(state=DISABLED)
+    algo_menu.configure(state=DISABLED)
     
     #top frame
     top_UI_frame = Frame(top, width=500, height=150, bg='#333')
     top_UI_frame.grid(row=0, column=0)
 
     #FUNCTIONS
-    def drawGraph(data):
+    def drawGraph(data, barColor):
         #delete previous data if present
         canvas.delete('all')
         canvasHeight = 300
@@ -56,25 +59,27 @@ def open_mainUI():
         for i, heightBar in enumerate(normalizedData):
             #coords for creating BarGraph
             #topLeft coords
-            x1 = offset + i*barGraphWidth + spacing
+            x1 = i*barGraphWidth + offset + spacing
             y1 = canvasHeight - heightBar*250
             #bottomRight coords
             x2 = (i+1)*barGraphWidth + offset
             y2 = canvasHeight
 
-            canvas.create_rectangle(x1, y1, x2, y2, fill='#800000')
+            canvas.create_rectangle(x1, y1, x2, y2, fill=barColor[i])
             #number written over the Bar Graph
             canvas.create_text(x1, y1, anchor=SW, text=str(data[i]))
 
+        #updating top window after drawing data after every single change
+        top.update_idletasks()
+
     def generate():
-        # data = [10, 3, 12, 6, 1, 13, 15, 20]
+        global data
         
         if sizeInput.get()=='' and minValue.get()=='' and maxValue.get()=='': 
             #Importing values from Input Data Entry Box
             userData = list(inputData.get().split())
             ipData = [ int(i) for i in userData]
-            #print(ipData)
-            drawGraph(ipData)
+            data = ipData
 
         else:
             inputData.delete(0, END)
@@ -94,7 +99,7 @@ def open_mainUI():
                 maxVal = 100
 
             if size  > 15:
-                size = 15
+                size = 15       #maxm 15 values only be generated randomly
 
             if size  < 3:
                 size = 5
@@ -103,16 +108,20 @@ def open_mainUI():
             #creating random data of given size
             for i in range(0, size):
                 createdData.append(random.randrange(minVal, maxVal+1))
+            data = createdData
 
-            drawGraph(createdData)
+        #initially whole created array is red(#800000)
+        drawGraph(data, ['#800000' for x in range(len(data))])
 
-    def simulate():
-        return
+    def startAlgorithm():
+        global data
+        bubble_sort(data, drawGraph, speedScale.get())
 
     def close_topUI():
         top.destroy()
         #Enabling Select button of root UI
         select_btn.configure(state=NORMAL)
+        algo_menu.configure(state=NORMAL)
 
 
     #Row[0] on top_UI_frame --> Row[0] on Top Level
@@ -136,7 +145,7 @@ def open_mainUI():
     Button(top_UI_frame, text="Generate Data", font=('Helvetica', '8', 'bold'), command=generate, bg='#4c602a', fg='#fff').grid(row=1, column=4, pady=10, sticky=W+E, columnspan=2)
 
     #Row[2] on top_UI_frame
-    Button(top_UI_frame, text="START Simulation", font=('Helvetica', '8', 'bold'), command=simulate, bg='#800000', fg='#fff').grid(row=2, column=0, pady=10, sticky=W+E, columnspan=6)
+    Button(top_UI_frame, text="START Simulation", font=('Helvetica', '8', 'bold'), command=startAlgorithm, bg='#800000', fg='#fff').grid(row=2, column=0, pady=10, sticky=W+E, columnspan=6)
 
 
     #Row[1]
@@ -172,9 +181,14 @@ Label(Initial_UI_frame, text='Algorithm: ', bg='#333', fg='#fff', font=('Helveti
 algo_menu = OptionMenu(Initial_UI_frame, Algorithm_selected_var, *options_algo)
 algo_menu.grid(row=1, column=1, padx=20, pady=10, sticky=E)
 
+#Simulation Speed Scale
+Label(Initial_UI_frame, text='Simulation Speed [s]:', bg='#333', fg='#fff', font=('Helvetica', '10', "bold")).grid(row=2, column=0, padx=10, pady=10, sticky=W)
+speedScale = Scale(Initial_UI_frame, from_=0.1, to=2.0, length=100, digits=2, resolution=0.2, orient=HORIZONTAL)
+speedScale.grid(row=2, column=1, padx=5, pady=5) 
+
 #Select Button
 select_btn = Button(Initial_UI_frame, text="Select", command=open_mainUI)
-select_btn.grid(row=2, column=0, pady=10, columnspan=3, sticky=W+E)
+select_btn.grid(row=3, column=0, pady=10, columnspan=3, sticky=W+E)
 
 
 root.mainloop()
