@@ -19,7 +19,7 @@ data = []
 title = Label(root, text="IPSA SIMULATOR", fg='white', bg='black', font=('Times', '18', "underline"))
 title.grid(row=0, column=0, pady=15, columnspan=3)
 
-#-------------------------------------------TOP MAIN UI----------------------------------------------------
+#_____________________________________________TOP MAIN UI______________________________________________
 #MAIN UI Function
 
 def open_mainUI():
@@ -27,13 +27,15 @@ def open_mainUI():
     top = Toplevel()
     top.title("IPSA Simulator")
     top.iconbitmap('3.ico')
-    top.minsize(400,300)
-    # top.maxsize(520,450)
+    #Fixed window size
+    top.minsize(593,492)
+    # top.maxsize(595,493)
     top.configure(background='#444')
 
     #Disabling widgets of root UI
     select_btn.configure(state=DISABLED)
     algo_menu.configure(state=DISABLED)
+    speedScale.configure(state=DISABLED)
     
     #top frame
     top_UI_frame = Frame(top, width=500, height=150, bg='#333')
@@ -49,7 +51,7 @@ def open_mainUI():
         #width of bar graphs to be generated
         barGraphWidth = canvasWidth / (len(data) + 1)
         #bar graph should not start at border
-        offset = 30
+        offset = 60
         #spacing b/w bars
         spacing = 10
         #Normalizing size of bar graph
@@ -137,17 +139,21 @@ def open_mainUI():
         #Enabling Select button of root UI
         select_btn.configure(state=NORMAL)
         algo_menu.configure(state=NORMAL)
+        speedScale.configure(state=NORMAL)
 
 
     #Row[0] on top_UI_frame --> Row[0] on Top Level
+    #Size Entry
     Label(top_UI_frame, text='Size: ', bg='#333', fg='#fff', font=('Helvetica', '10', 'bold')).grid(row=0, column=0, padx=10, pady=10, sticky=W)
     sizeInput = Entry(top_UI_frame, width=10, font=('Helvetica', '10', 'bold'))
     sizeInput.grid(row=0, column=1, padx=10, pady=10, sticky=W)
 
+    #Min. Value Entry
     Label(top_UI_frame, text='Min. Value: ', bg='#333', fg='#fff', font=('Helvetica', '10', 'bold')).grid(row=0, column=2, padx=10, pady=10, sticky=W)
     minValue = Entry(top_UI_frame, width=10, font=('Helvetica', '10', 'bold'))
     minValue.grid(row=0, column=3, padx=10, pady=10, sticky=W)
 
+    #Max. Value Entry
     Label(top_UI_frame, text='Max. Value: ', bg='#333', fg='#fff', font=('Helvetica', '10', 'bold')).grid(row=0, column=4, padx=10, pady=10, sticky=W)
     maxValue = Entry(top_UI_frame, width=10, font=('Helvetica', '10', 'bold'))
     maxValue.grid(row=0, column=5, padx=10, pady=10, sticky=W)
@@ -157,6 +163,7 @@ def open_mainUI():
     inputData = Entry(top_UI_frame, width=10, font=('Helvetica', '10', 'bold'))
     inputData.grid(row=1, column=1, padx=10, pady=10, columnspan=2, sticky=W+E)
 
+    #Generate Data Button
     Button(top_UI_frame, text="Generate Data", font=('Helvetica', '8', 'bold'), command=generate, bg='#4c602a', fg='#fff').grid(row=1, column=4, pady=10, sticky=W+E, columnspan=2)
 
     #Row[2] on top_UI_frame
@@ -172,7 +179,7 @@ def open_mainUI():
     close_top_btn = Button(top, text="CLOSE", font=('Helvetica', '8', 'bold'), command=close_topUI)
     close_top_btn.grid(row=2, column=0, pady=10, sticky=W+E)
 
-#----------------------------------------------------------------------------------------------------------------------
+#________________________________________________________________________________________________________________________________________________________________
 
 #INITIAL UI
 
