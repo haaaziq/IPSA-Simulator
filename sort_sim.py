@@ -2,7 +2,7 @@ from tkinter import *
 from PIL import ImageTk, Image
 from tkinter import ttk
 import random
-from sortingAlgos import bubble_sort
+from sortingAlgos import bubble_sort, insertion_sort, selection_sort
 
 root = Tk()
 root.title('IPSA Simulator')
@@ -115,7 +115,22 @@ def open_mainUI():
 
     def startAlgorithm():
         global data
-        bubble_sort(data, drawGraph, speedScale.get())
+
+        #when empty data array
+        if not data:
+            return
+
+        else:
+            if Algorithm_selected_var.get() == "Bubble Sort":
+                bubble_sort(data, drawGraph, speedScale.get())
+
+            elif Algorithm_selected_var.get() == "Insertion Sort":
+                insertion_sort(data, drawGraph, speedScale.get())
+
+            elif Algorithm_selected_var.get() == "Selection Sort":
+                selection_sort(data, drawGraph, speedScale.get())
+
+            drawGraph(data, ['#4c602a' for x in range(len(data))])
 
     def close_topUI():
         top.destroy()
@@ -183,7 +198,7 @@ algo_menu.grid(row=1, column=1, padx=20, pady=10, sticky=E)
 
 #Simulation Speed Scale
 Label(Initial_UI_frame, text='Simulation Speed [s]:', bg='#333', fg='#fff', font=('Helvetica', '10', "bold")).grid(row=2, column=0, padx=10, pady=10, sticky=W)
-speedScale = Scale(Initial_UI_frame, from_=0.1, to=2.0, length=100, digits=2, resolution=0.2, orient=HORIZONTAL)
+speedScale = Scale(Initial_UI_frame, from_=0.1, to=3.0, length=100, digits=2, resolution=0.2, orient=HORIZONTAL)
 speedScale.grid(row=2, column=1, padx=5, pady=5) 
 
 #Select Button
